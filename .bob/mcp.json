@@ -2,7 +2,8 @@
   "mcpServers": {
     "bobship": {
       "command": "node",
-      "args": ["mcp-server/dist/index.js"]
+      "args": ["mcp-server/dist/index.js"],
+      "cwd": "${workspaceRoot}"
     }
   }
 }
