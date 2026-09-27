@@ -73,3 +73,66 @@ Bob should coordinate the workflow and perform implementation/verification.
 - Do not claim tests passed without actually running them.
 - Prefer small, focused commits.
 - Keep components modular.
+
+## BobShip Workflow
+
+When the user asks to prepare a project for production:
+
+1. Inspect the repository.
+2. Load the release-engineer skill.
+3. Identify project technologies and test frameworks.
+4. Delegate independent analysis to specialized subagents.
+5. Use MCP tools for deterministic checks.
+6. Collect all findings.
+7. Normalize findings into a common format.
+8. Calculate release readiness.
+9. Present blockers and recommended fixes.
+10. Ask for approval before risky changes.
+11. Apply safe fixes.
+12. Run verification.
+13. Recalculate readiness.
+14. Generate release artifacts.
+
+## Subagents
+
+### Test Agent
+Responsible for:
+- tests
+- coverage
+- regression readiness
+
+### Security Agent
+Responsible for:
+- secrets
+- unsafe configuration
+- security-related release blockers
+
+### API Agent
+Responsible for:
+- API implementation
+- OpenAPI
+- request/response consistency
+
+### Deployment Agent
+Responsible for:
+- Docker
+- deployment configuration
+- environment requirements
+
+### Documentation Agent
+Responsible for:
+- README
+- setup instructions
+- configuration documentation
+
+## Important
+
+IBM Bob is the central orchestrator.
+
+MCP tools provide deterministic information.
+
+Subagents provide specialized reasoning.
+
+The dashboard is only a visualization layer.
+
+Never claim that a fix succeeded without verification.
