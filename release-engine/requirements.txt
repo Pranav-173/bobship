@@ -1,0 +1,9 @@
+# BobShip Release Engine — Python dependencies
+#
+# This component uses the Python standard library only.
+# No third-party packages are required.
+#
+# If future integration needs arise (e.g. pytest for CI, mypy for type checks),
+# add them here with pinned versions.
+#
+# pytest>=7.0  # uncomment to enable pytest-based test runner
