@@ -2,12 +2,8 @@
   "mcpServers": {
     "bobship": {
       "command": "node",
-      "args": ["mcp-server/dist/index.js"]
-    },
-    "bobship-fixture": {
-      "command": "node",
-      "args": ["/home/amal/Desktop/bobship/mcp-server/dist/index.js"],
-      "cwd": "/home/amal/Desktop/bobship/mcp-server/fixtures/sample-repo"
+      "args": ["mcp-server/dist/index.js"],
+      "cwd": "${workspaceRoot}"
     }
   }
 }
