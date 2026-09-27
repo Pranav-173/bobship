@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>bobship · Release Readiness</title>
+<style>
+  :root{
+    --bg:#0E1116; --panel:#161A21; --panel-alt:#1C212B; --border:#262C38;
+    --text:#E8EAF0; --text-dim:#8890A0; --accent:#2DD4BF;
+    --critical:#F0465C; --high:#F97316; --medium:#EAB308; --low:#38BDF8; --info:#64748B;
+    --good:#22C55E;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+    line-height:1.5;
+  }
+  .mono{font-family:ui-monospace,SFMono-Regular,"JetBrains Mono",Menlo,monospace;}
+  .wrap{max-width:960px; margin:0 auto; padding:40px 24px 80px;}
+
+  header{display:flex; justify-content:space-between; align-items:flex-start; gap:24px; margin-bottom:36px; flex-wrap:wrap;}
+  .brand{font-family:ui-monospace,monospace; color:var(--accent); font-size:0.9rem; letter-spacing:0.02em; margin-bottom:6px;}
+  h1{font-size:1.9rem; margin:0 0 8px; font-weight:650; letter-spacing:-0.01em;}
+  .tagline{color:var(--text-dim); margin:0; max-width:46ch; font-size:0.95rem;}
+
+  .loadbar{display:flex; gap:8px; flex-wrap:wrap;}
+  button{
+    background:var(--panel-alt); color:var(--text); border:1px solid var(--border);
+    padding:9px 14px; border-radius:8px; font-size:0.85rem; cursor:pointer;
+    font-family:inherit; transition:border-color .15s, background .15s;
+  }
+  button:hover{border-color:#3A4254; background:#20262f;}
+  button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  button.primary{background:var(--accent); color:#04211D; border-color:var(--accent); font-weight:600;}
+  button.primary:hover{filter:brightness(1.08);}
+  button.active{border-color:var(--accent); color:var(--accent);}
+
+  #inputPanel{display:none; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:28px;}
+  #inputPanel.open{display:block;}
+  #inputPanel textarea{
+    width:100%; min-height:140px; background:var(--bg); color:var(--text);
+    border:1px solid var(--border); border-radius:8px; padding:12px; font-family:ui-monospace,monospace;
+    font-size:0.8rem; resize:vertical;
+  }
+  #inputPanel .row{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  #inputPanel p{color:var(--text-dim); font-size:0.8rem; margin:10px 0 0;}
+  #parseError{color:var(--critical); font-size:0.82rem; margin-top:8px; display:none;}
+
+  #empty{border:1px dashed var(--border); border-radius:12px; padding:56px 24px; text-align:center; color:var(--text-dim);}
+  #empty h2{color:var(--text); font-size:1.1rem; margin:0 0 8px;}
+
+  #report{display:none;}
+  #report.open{display:block;}
+
+  .grid-top{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;}
+  @media (max-width:640px){ .grid-top{grid-template-columns:1fr;} }
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:22px;}
+  .card .label{color:var(--text-dim); font-size:0.78rem; margin-bottom:10px;}
+
+  .score-num{font-size:3rem; font-weight:700; line-height:1; letter-spacing:-0.02em;}
+  .score-tag{display:inline-block; margin-top:10px; padding:3px 10px; border-radius:6px; font-size:0.78rem; font-weight:600;}
+  .target-line{margin-top:14px; color:var(--text-dim); font-size:0.8rem;}
+  .target-line .mono{color:var(--text);}
+
+  .ba-row{display:flex; align-items:baseline; gap:14px; margin-top:6px;}
+  .ba-num{font-size:1.9rem; font-weight:700;}
+  .ba-arrow{color:var(--text-dim); font-size:1.3rem;}
+  .ba-delta{font-size:0.85rem; font-weight:600; padding:2px 8px; border-radius:6px;}
+  .no-ba{color:var(--text-dim); font-size:0.85rem;}
+
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px;}
+  .chip{
+    border:1px solid var(--border); border-radius:999px; padding:6px 14px; font-size:0.8rem;
+    display:flex; align-items:center; gap:7px; background:var(--panel); cursor:pointer; user-select:none;
+  }
+  .chip .dot{width:8px; height:8px; border-radius:50%;}
+  .chip.active{border-color:currentColor;}
+
+  table{width:100%; border-collapse:collapse; font-size:0.85rem;}
+  thead th{
+    text-align:left; color:var(--text-dim); font-weight:500; font-size:0.75rem;
+    padding:0 12px 10px; border-bottom:1px solid var(--border);
+  }
+  tbody td{padding:12px; border-bottom:1px solid var(--border); vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--panel-alt);}
+  .sev-badge{display:inline-block; padding:2px 9px; border-radius:5px; font-size:0.72rem; font-weight:600; text-transform:lowercase;}
+  .loc{color:var(--text-dim); white-space:nowrap;}
+  .msg{max-width:420px;}
+  .status-pass::before{content:"✓ "; color:var(--good);}
+  .status-fail::before{content:"✕ "; color:var(--critical);}
+  .status-warning::before{content:"! "; color:var(--high);}
+  .status-info::before{content:"i "; color:var(--info);}
+
+  footer{margin-top:36px; color:var(--text-dim); font-size:0.78rem; border-top:1px solid var(--border); padding-top:18px;}
+
+  @media (prefers-reduced-motion:no-preference){
+    #report.open, #inputPanel.open{ animation:fade .25s ease; }
+    @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="brand">bobship</div>
+      <h1>Release Readiness</h1>
+      <p class="tagline">Findings from the bobship MCP tools, verified live through IBM Bob.</p>
+    </div>
+    <div class="loadbar">
+      <button id="toggleInput">Load report</button>
+      <button id="loadSample">Load sample</button>
+    </div>
+  </header>
+
+  <div id="inputPanel">
+    <div class="row">
+      <strong style="font-size:0.85rem;">Paste report JSON</strong>
+      <button id="renderBtn" class="primary">Render</button>
+    </div>
+    <textarea id="jsonInput" placeholder='Paste the output of a release_snapshot call — either a single snapshot ({ findings, counts, target, tool }) or { "before": {...}, "after": {...} } to show a comparison.'></textarea>
+    <p>Tip: copy this straight out of Bob's chat panel after it calls <span class="mono">release_snapshot</span> — no reformatting needed.</p>
+    <div id="parseError"></div>
+  </div>
+
+  <div id="empty">
+    <h2>No report loaded yet</h2>
+    <p>Load a report to see the readiness score and findings.</p>
+  </div>
+
+  <div id="report">
+    <div class="grid-top">
+      <div class="card">
+        <div class="label">Readiness score</div>
+        <div class="score-num" id="scoreNum">—</div>
+        <span class="score-tag" id="scoreTag"></span>
+        <div class="target-line" id="targetLine"></div>
+      </div>
+      <div class="card">
+        <div class="label">Before → after</div>
+        <div id="baContent"><span class="no-ba">Load a report with "before" and "after" snapshots to see improvement over time.</span></div>
+      </div>
+    </div>
+
+    <div class="chips" id="chips"></div>
+
+    <table>
+      <thead>
+        <tr><th style="width:90px;">Severity</th><th style="width:80px;">Status</th><th style="width:110px;">Category</th><th style="width:170px;">Location</th><th>Message</th></tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <footer id="footerMeta"></footer>
+  </div>
+</div>
+
+<script>
+const SEV_COLOR = {critical:'var(--critical)', high:'var(--high)', medium:'var(--medium)', low:'var(--low)', info:'var(--info)'};
+const SEV_ORDER = ['critical','high','medium','low','info'];
+const SEV_WEIGHT = {critical:25, high:12, medium:5, low:2, info:0};
+
+let currentFindings = [];
+let activeFilter = 'all';
+
+function el(id){ return document.getElementById(id); }
+
+function normalizeSnapshot(raw){
+  const findings = Array.isArray(raw.findings) ? raw.findings : [];
+  const sevCounts = {critical:0, high:0, medium:0, low:0, info:0};
+  findings.forEach(f => { const s = (f.severity || 'info').toLowerCase(); if (sevCounts[s] !== undefined) sevCounts[s]++; });
+  let score = typeof raw.score === 'number' ? raw.score : null;
+  if (score === null){
+    const penalty = SEV_ORDER.reduce((sum, s) => sum + SEV_WEIGHT[s] * sevCounts[s], 0);
+    score = Math.max(0, Math.min(100, 100 - penalty));
+  }
+  return { findings, sevCounts, score, target: raw.target || null, tool: raw.tool || null, summary: raw.summary || null };
+}
+
+function scoreTag(score){
+  if (score >= 85) return {text:'Ready to ship', color:'var(--good)'};
+  if (score >= 60) return {text:'Needs review', color:'var(--high)'};
+  return {text:'Blocked', color:'var(--critical)'};
+}
+
+function render(raw){
+  el('parseError').style.display = 'none';
+  const hasBA = raw && raw.before && raw.after;
+  const snap = normalizeSnapshot(hasBA ? raw.after : raw);
+  currentFindings = snap.findings;
+  activeFilter = 'all';
+
+  el('scoreNum').textContent = snap.score;
+  const tag = scoreTag(snap.score);
+  el('scoreTag').textContent = tag.text;
+  el('scoreTag').style.background = tag.color + '22';
+  el('scoreTag').style.color = tag.color;
+  el('targetLine').innerHTML = snap.target ? `target: <span class="mono">${escapeHtml(snap.target)}</span>` : '';
+
+  if (hasBA){
+    const before = normalizeSnapshot(raw.before);
+    const delta = snap.score - before.score;
+    const deltaColor = delta >= 0 ? 'var(--good)' : 'var(--critical)';
+    el('baContent').innerHTML = `
+      <div class="ba-row">
+        <span class="ba-num" style="color:${scoreTag(before.score).color}">${before.score}</span>
+        <span class="ba-arrow">&rarr;</span>
+        <span class="ba-num" style="color:${scoreTag(snap.score).color}">${snap.score}</span>
+        <span class="ba-delta" style="background:${deltaColor}22; color:${deltaColor};">${delta >= 0 ? '+' : ''}${delta}</span>
+      </div>`;
+  } else {
+    el('baContent').innerHTML = '<span class="no-ba">Load a report with "before" and "after" snapshots to see improvement over time.</span>';
+  }
+
+  const chipsEl = el('chips');
+  chipsEl.innerHTML = '';
+  const allChip = makeChip('all', 'All', currentFindings.length, '#8890A0');
+  chipsEl.appendChild(allChip);
+  SEV_ORDER.forEach(s => {
+    if (snap.sevCounts[s] > 0) chipsEl.appendChild(makeChip(s, s, snap.sevCounts[s], SEV_COLOR[s]));
+  });
+
+  renderTable();
+
+  const meta = [];
+  if (snap.tool) meta.push(`tool: ${snap.tool}`);
+  meta.push(`${currentFindings.length} finding${currentFindings.length === 1 ? '' : 's'}`);
+  el('footerMeta').textContent = meta.join(' · ');
+
+  el('empty').style.display = 'none';
+  el('report').classList.add('open');
+}
+
+function makeChip(key, label, count, color){
+  const d = document.createElement('div');
+  d.className = 'chip' + (key === activeFilter ? ' active' : '');
+  d.style.color = color;
+  d.innerHTML = `<span class="dot" style="background:${color}"></span>${label} <span class="mono">${count}</span>`;
+  d.onclick = () => { activeFilter = key; document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); d.classList.add('active'); renderTable(); };
+  return d;
+}
+
+function renderTable(){
+  const rows = currentFindings
+    .filter(f => activeFilter === 'all' || (f.severity || 'info').toLowerCase() === activeFilter)
+    .sort((a,b) => SEV_ORDER.indexOf((a.severity||'info').toLowerCase()) - SEV_ORDER.indexOf((b.severity||'info').toLowerCase()));
+
+  el('tbody').innerHTML = rows.map(f => {
+    const sev = (f.severity || 'info').toLowerCase();
+    const status = (f.status || '').toLowerCase();
+    const loc = f.file ? `${escapeHtml(f.file)}${f.line ? ':' + f.line : ''}` : '—';
+    return `<tr>
+      <td><span class="sev-badge" style="background:${SEV_COLOR[sev]}22; color:${SEV_COLOR[sev]}">${sev}</span></td>
+      <td class="status-${status}">${escapeHtml(f.status || '')}</td>
+      <td>${escapeHtml(f.category || '—')}</td>
+      <td class="loc mono">${loc}</td>
+      <td class="msg">${escapeHtml(f.message || '')}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" style="color:var(--text-dim); padding:24px 12px;">No findings match this filter.</td></tr>';
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+el('toggleInput').onclick = () => el('inputPanel').classList.toggle('open');
+el('renderBtn').onclick = () => {
+  try {
+    const raw = JSON.parse(el('jsonInput').value);
+    render(raw);
+    el('inputPanel').classList.remove('open');
+  } catch (e) {
+    el('parseError').textContent = 'Could not parse JSON: ' + e.message;
+    el('parseError').style.display = 'block';
+  }
+};
+
+const SAMPLE = {
+  before: {
+    tool: 'release_snapshot', target: 'fixtures/sample-repo', score: 34,
+    findings: [
+      {status:'fail', severity:'critical', category:'security', file:'backend/config.py', line:4, message:'Stripe live secret key detected'},
+      {status:'fail', severity:'high', category:'security', file:'.env.example', line:1, message:'Hardcoded database connection string with credentials detected'},
+      {status:'warning', severity:'medium', category:'deployment', file:'Dockerfile', message:'No HEALTHCHECK instruction'},
+      {status:'warning', severity:'medium', category:'deployment', file:'Dockerfile', message:'Container will run as root (no USER set)'},
+      {status:'warning', severity:'low', category:'deployment', file:'Dockerfile', message:'No EXPOSE instruction'},
+      {status:'warning', severity:'medium', category:'api', file:'openapi.yaml', message:'/orders route implemented but undocumented in OpenAPI spec'},
+      {status:'warning', severity:'medium', category:'dependencies', file:'requirements.txt', message:'fastapi dependency is unpinned'},
+      {status:'warning', severity:'low', category:'documentation', file:'.env.example', message:'DEBUG env var used in code but undocumented'}
+    ]
+  },
+  after: {
+    tool: 'release_snapshot', target: 'fixtures/sample-repo', score: 91,
+    findings: [
+      {status:'warning', severity:'low', category:'deployment', file:'Dockerfile', message:'No EXPOSE instruction'},
+      {status:'pass', severity:'info', category:'deployment', file:'Dockerfile', message:'Base image pinned to python:3.11'},
+      {status:'pass', severity:'info', category:'security', file:'backend/config.py', message:'No hardcoded secrets detected'},
+      {status:'pass', severity:'info', category:'api', file:'openapi.yaml', message:'All routes documented'},
+      {status:'pass', severity:'info', category:'dependencies', file:'requirements.txt', message:'All dependencies pinned'}
+    ]
+  }
+};
+el('loadSample').onclick = () => render(SAMPLE);
+</script>
+</body>
+</html>
