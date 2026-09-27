@@ -1,0 +1,127 @@
+{
+  "tool": "release_snapshot",
+  "target": ".",
+  "generatedAt": "2026-09-27T12:13:39.646Z",
+  "findings": [
+    {
+      "status": "fail",
+      "severity": "high",
+      "category": "security",
+      "message": "Hardcoded database connection string with credentials detected",
+      "file": ".env.example",
+      "line": 1
+    },
+    {
+      "status": "fail",
+      "severity": "critical",
+      "category": "security",
+      "message": "Stripe live secret key detected",
+      "file": "backend/config.py",
+      "line": 4
+    },
+    {
+      "status": "warning",
+      "severity": "medium",
+      "category": "deployment",
+      "message": "Dockerfile has no HEALTHCHECK instruction.",
+      "file": "Dockerfile"
+    },
+    {
+      "status": "warning",
+      "severity": "medium",
+      "category": "deployment",
+      "message": "Dockerfile does not set a non-root USER; container will run as root.",
+      "file": "Dockerfile"
+    },
+    {
+      "status": "pass",
+      "severity": "info",
+      "category": "deployment",
+      "message": "Base image is pinned to a specific tag.",
+      "file": "Dockerfile"
+    },
+    {
+      "status": "warning",
+      "severity": "low",
+      "category": "deployment",
+      "message": "No EXPOSE instruction found; port intent is undocumented.",
+      "file": "Dockerfile"
+    },
+    {
+      "status": "warning",
+      "severity": "low",
+      "category": "deployment",
+      "message": "No docker-compose file found (may be intentional for single-container apps)."
+    },
+    {
+      "status": "warning",
+      "severity": "high",
+      "category": "documentation",
+      "message": "Environment variable 'DEBUG' is used in code but missing from .env.example",
+      "file": "backend/config.py",
+      "line": 6
+    },
+    {
+      "status": "warning",
+      "severity": "high",
+      "category": "api",
+      "message": "GET /orders is defined in openapi.yaml but no matching route was found in the backend code (heuristic match — verify manually).",
+      "file": "openapi.yaml"
+    },
+    {
+      "status": "info",
+      "severity": "info",
+      "category": "api",
+      "message": "Compared 3 spec route(s) against 4 route(s) found in code. This is a heuristic text match, not a schema-level contract check."
+    },
+    {
+      "status": "warning",
+      "severity": "medium",
+      "category": "dependencies",
+      "message": "'fastapi' has no version pin in requirements.txt — builds are not reproducible.",
+      "file": "requirements.txt"
+    },
+    {
+      "status": "info",
+      "severity": "info",
+      "category": "git",
+      "message": "2 file(s) changed on branch 'main' vs working tree."
+    },
+    {
+      "status": "warning",
+      "severity": "low",
+      "category": "git",
+      "message": "untracked: bob_sessions/bobship_task06_fixture_path_fix_summary.png",
+      "file": "bob_sessions/bobship_task06_fixture_path_fix_summary.png"
+    },
+    {
+      "status": "warning",
+      "severity": "low",
+      "category": "git",
+      "message": "untracked: bob_sessions/bobship_task07_stale_rebuild_verified_summary.png",
+      "file": "bob_sessions/bobship_task07_stale_rebuild_verified_summary.png"
+    },
+    {
+      "status": "fail",
+      "severity": "medium",
+      "category": "testing",
+      "message": "pytest config/tests directory found, but 'pytest' is not installed or not on PATH."
+    }
+  ],
+  "counts": {
+    "pass": 1,
+    "warning": 9,
+    "fail": 3,
+    "info": 2
+  },
+  "toolsRun": [
+    "scan_secrets",
+    "inspect_docker",
+    "inspect_environment",
+    "validate_openapi",
+    "dependency_check",
+    "git_diff",
+    "run_tests"
+  ],
+  "summary": "7 check(s) run: 1 critical failure(s), 3 high-severity issue(s), 9 warning(s) total."
+}
