@@ -4,8 +4,9 @@ This file provides guidance to agents when working with code in this repository.
 
 ## Non-Obvious Coding Rules
 
-- **Most source files are empty stubs.** `mcp-server/src/tools/`, `release-engine/src/*.py`, `sample-app/backend/`, `sample-app/frontend/`, `sample-app/tests/`, and `dashboard/src/components/` all contain no implementation yet. Don't assume there's existing logic to integrate with.
-- **Release scores live in the skill, not in code.** The scoring thresholds (READY / READY WITH WARNINGS / NOT READY / BLOCKED) are defined in `.bob/skills/release-engineer/SKILL.md` — there is no `scoring.py` implementation yet despite the file existing.
+- **MCP server and Release Engine are fully implemented.** `mcp-server/src/tools/` contains 9 tool modules (TypeScript, 11/11 smoke tests passing). `release-engine/src/` contains `analyzer.py`, `scoring.py`, `models.py`, `report_generator.py`, `mcp_adapter.py` (132 Python tests passing). Do not treat these as stubs — read them before modifying.
+- **`sample-app/backend/`, `sample-app/frontend/`, `sample-app/tests/`, and `dashboard/src/components/` are genuinely empty.** The controlled demo issues live in `mcp-server/fixtures/sample-repo/`, not in `sample-app/`.
+- **Release scores are defined in the skill AND implemented in code.** The thresholds (READY / READY WITH WARNINGS / NOT READY / BLOCKED) are in `.bob/skills/release-engineer/SKILL.md`; `scoring.py` implements them exactly — do not modify either without updating both.
 - **`reports/` is output-only.** The only tracked file is `.gitkeep`. Agents write generated reports there; do not put source files there.
 - **`sample-app/` bugs are intentional.** It contains controlled release issues for demonstration. Do not "fix" them unless that is the explicit task.
 - **MCP tools must be stateless and side-effect-free.** Bob calls them for deterministic facts. Any statefulness breaks the orchestration model.

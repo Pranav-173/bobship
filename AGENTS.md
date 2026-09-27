@@ -20,16 +20,14 @@ BobShip is an AI-powered release engineering workflow built around IBM Bob. IBM 
 
 ## Stack
 
-- **MCP server**: Node.js / TypeScript (empty scaffold — `mcp-server/src/tools/` is unpopulated)
-- **Release engine**: Python (`release-engine/src/`) — also an empty scaffold
-- **Sample app**: Multi-component (backend + frontend + tests subdirs — all empty scaffolds)
-- **Dashboard**: Component-based (framework TBD — `dashboard/src/components/` is empty)
-
-> Most source files are currently empty stubs. When implementing, follow the architectural constraints below.
+- **MCP server**: Node.js / TypeScript — fully implemented; `mcp-server/src/tools/` contains 9 tool modules; `mcp-server/package.json` has `build` / `start` / `smoke-test` scripts
+- **Release engine**: Python (`release-engine/src/`) — fully implemented: `analyzer.py`, `scoring.py`, `models.py`, `report_generator.py`, `mcp_adapter.py`; 132 tests passing
+- **Sample app**: Multi-component (`backend/`, `frontend/`, `tests/` subdirs are intentionally empty scaffolds — demo issues live in `mcp-server/fixtures/sample-repo/`)
+- **Dashboard**: Self-contained HTML (`dashboard/release-dashboard.html`) — teammate-owned; `dashboard/src/components/` is an empty placeholder
 
 ## Commands
 
-No `package.json` or build scripts exist yet. When they are added, commands will live in per-component directories, not the repo root.
+Build commands live in per-component directories, not the repo root.
 
 - Python virtual env is expected at `release-engine/.venv/` or `release-engine/venv/`
 - Env files follow `.env` / `.env.*` pattern (`.env.example` is tracked, others gitignored)
