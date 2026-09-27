@@ -17,7 +17,7 @@ interface SecretPattern {
 const PATTERNS: SecretPattern[] = [
   { name: "AWS Access Key ID", regex: /\bAKIA[0-9A-Z]{16}\b/, severity: "critical" },
   { name: "Generic private key header", regex: /-----BEGIN (RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----/, severity: "critical" },
-  { name: "Stripe live secret key", regex: /\bsk_live_[0-9a-zA-Z]{16,}\b/, severity: "critical" },
+  { name: "Stripe live secret key", regex: /\bsk_live_[0-9a-zA-Z-]{16,}\b/, severity: "critical" },
   { name: "Slack token", regex: /\bxox[baprs]-[0-9a-zA-Z-]{10,}\b/, severity: "high" },
   { name: "GitHub token", regex: /\bgh[pousr]_[0-9A-Za-z]{20,}\b/, severity: "high" },
   { name: "Generic JWT", regex: /\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/, severity: "medium" },
@@ -34,7 +34,7 @@ const PATTERNS: SecretPattern[] = [
 ];
 
 // Lines that are almost certainly placeholders, not real secrets.
-const PLACEHOLDER_HINT = /(your[-_ ]?|example|placeholder|xxxx|changeme|<.*>|\$\{|%\{|dummy|test[-_ ]?value|fake)/i;
+const PLACEHOLDER_HINT = /(your[-_ ]?|example|placeholder|xxxx|changeme|<.*>|\$\{|%\{|dummy|test[-_ ]?value)/i;
 
 const SKIP_FILE_SUFFIXES = [".lock", ".map", ".min.js", ".svg", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".woff", ".woff2"];
 
