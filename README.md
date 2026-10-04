@@ -40,9 +40,9 @@ flowchart TD
 
 The dashboard renders:
 
-- **Readiness score** — a 0–100 score with a pass/warn/blocked status label
-- **Severity breakdown** — filterable chips for critical / high / medium / low / info
-- **Findings table** — each finding's severity, status, category, file location, and message
+- **Readiness score** - a 0–100 score with a pass/warn/blocked status label
+- **Severity breakdown** - filterable chips for critical / high / medium / low / info
+- **Findings table** - each finding's severity, status, category, file location, and message
 
 **Before/after comparison:**
 
