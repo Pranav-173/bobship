@@ -18,21 +18,15 @@ Bob coordinates specialized subagents and deterministic MCP tools, identifies re
 
 ## Architecture
 
-```text
-IBM Bob
-   |
-Release Engineer Skill
-   |
-Subagents + MCP Tools
-   |
-Release Analysis
-   |
-Safe Fixes
-   |
-Verification
-   |
-Release Package
-
+```mermaid
+flowchart TD
+    A["IBM Bob"] --> B["Release Engineer Skill"]
+    B --> C["Subagents + MCP Tools"]
+    C --> D["Release Analysis"]
+    D --> E["Safe Fixes"]
+    E --> F["Verification"]
+    F --> G["Release Package"]
+```
 
 ## Dashboard
 
