@@ -18,21 +18,15 @@ Bob coordinates specialized subagents and deterministic MCP tools, identifies re
 
 ## Architecture
 
-```text
-IBM Bob
-   |
-Release Engineer Skill
-   |
-Subagents + MCP Tools
-   |
-Release Analysis
-   |
-Safe Fixes
-   |
-Verification
-   |
-Release Package
-
+```mermaid
+flowchart TD
+    A["IBM Bob"] --> B["Release Engineer Skill"]
+    B --> C["Subagents + MCP Tools"]
+    C --> D["Release Analysis"]
+    D --> E["Safe Fixes"]
+    E --> F["Verification"]
+    F --> G["Release Package"]
+```
 
 ## Dashboard
 
@@ -46,9 +40,9 @@ Release Package
 
 The dashboard renders:
 
-- **Readiness score** — a 0–100 score with a pass/warn/blocked status label
-- **Severity breakdown** — filterable chips for critical / high / medium / low / info
-- **Findings table** — each finding's severity, status, category, file location, and message
+- **Readiness score** - a 0–100 score with a pass/warn/blocked status label
+- **Severity breakdown** - filterable chips for critical / high / medium / low / info
+- **Findings table** - each finding's severity, status, category, file location, and message
 
 **Before/after comparison:**
 
